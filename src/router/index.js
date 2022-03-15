@@ -8,6 +8,18 @@ const routes = [
     path: '/',
     name: 'LoginIndex',
     component: () => import('../views/login/index.vue')
+  },
+  {
+    path: '/layout',
+    component: () => import('../views/layout/index.vue'),
+    children: [
+      {
+        path: '',
+        name: 'layout-homePage',
+        component: () =>
+          import('../views/layout/components/layout-homePage.vue')
+      }
+    ]
   }
 ]
 

@@ -126,6 +126,10 @@ export default {
           },
           1500
         )
+        // 本地存储用户信息
+        this.$store.commit('setUser', data.data)
+        // 跳转到来源页
+        this.$router.push('layout')
       } catch (err) {
         setTimeout(() => {
           this.$emit('close')
