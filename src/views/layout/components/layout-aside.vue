@@ -1,5 +1,7 @@
 <template>
   <el-menu
+    :collapse-transition="false"
+    :collapse="isCollapse"
     default-active="/"
     class="el-menu-vertical-demo"
     @open="handleOpen"
@@ -44,6 +46,12 @@
 <script>
 export default {
   name: 'layout-aside',
+  props: {
+    isCollapse: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {}
   },
