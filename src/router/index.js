@@ -6,8 +6,11 @@ Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '/',
+    component: () => import('../views/login/index.vue')
+  },
+  {
     path: '/login',
-    name: 'login',
     component: () => import('../views/login/index.vue')
   },
   {
@@ -19,6 +22,37 @@ const routes = [
         name: 'layout-homePage',
         component: () =>
           import('../views/layout/components/layout-homePage.vue')
+      },
+      {
+        path: '/home',
+        name: 'layout-homePage',
+        component: () =>
+          import('../views/layout/components/layout-homePage.vue')
+      },
+      {
+        path: '/article',
+        name: 'article',
+        component: () => import('../views/article/')
+      },
+      {
+        path: '/issueArticle',
+        name: 'issueArticle',
+        component: () => import('../views/issueArticle/')
+      },
+      {
+        path: '/comment',
+        name: 'comment',
+        component: () => import('../views/comment/')
+      },
+      {
+        path: '/beanVermicelli',
+        name: 'beanVermicelli',
+        component: () => import('../views/beanVermicelli/')
+      },
+      {
+        path: '/user',
+        name: 'user',
+        component: () => import('../views/user/')
       }
     ]
   }

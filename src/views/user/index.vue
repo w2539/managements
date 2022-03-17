@@ -1,9 +1,9 @@
 <template>
-  <div class="layout-homePage">22222</div>
+  <div class="user">kkkkk</div>
 </template>
 <script>
 export default {
-  name: 'layout-homePage',
+  name: 'user',
   data () {
     return {}
   },

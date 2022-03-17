@@ -1,9 +1,9 @@
 <template>
-  <div class="layout-homePage">22222</div>
+  <div class="index">llll</div>
 </template>
 <script>
 export default {
-  name: 'layout-homePage',
+  name: 'comment',
   data () {
     return {}
   },

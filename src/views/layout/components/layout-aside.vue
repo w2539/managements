@@ -2,16 +2,14 @@
   <el-menu
     :collapse-transition="false"
     :collapse="isCollapse"
-    default-active="/"
+    :default-active="activePath"
     class="el-menu-vertical-demo"
-    @open="handleOpen"
-    @close="handleClose"
     background-color="#545c64"
     text-color="#fff"
     active-text-color="#ffd04b"
     router
   >
-    <el-menu-item index="/">
+    <el-menu-item index="/home">
       <i class="el-icon-menu"></i>
       <span slot="title">首页</span>
     </el-menu-item>
@@ -56,8 +54,13 @@ export default {
     return {}
   },
   created () {},
-  computed: {},
+  computed: {
+    activePath () {
+      return this.$route.path
+    }
+  },
   components: {},
+  update () {},
   methods: {
     handleOpen (key, keyPath) {
       console.log(key, keyPath)
