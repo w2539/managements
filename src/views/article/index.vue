@@ -45,8 +45,15 @@ export default {
     margin-left: 100px !important;
     margin-bottom: 30px;
   }
-  .ArticleBread {
-    width: 100% !important;
+
+  .ArticleTable {
+    margin-bottom: 5px;
+  }
+  /deep/.el-table--fit {
+    margin-bottom: 25px;
+  }
+  .el-pagination {
+    margin-left: 250px;
   }
 }
 </style>
