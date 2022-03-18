@@ -73,13 +73,13 @@ export default {
           this.$router.push('/login')
           this.$message({
             type: 'success',
-            message: '删除成功!'
+            message: '退出完成!'
           })
         })
         .catch(() => {
           this.$message({
             type: 'info',
-            message: '已取消删除'
+            message: '已取消退出'
           })
         })
     }
@@ -124,6 +124,7 @@ export default {
     display: flex;
     height: 80px !important;
     // background-color: aquamarine;
+    border-bottom: 1px solid #ccc;
     &-left {
       margin-left: 15px;
       width: 150px;
@@ -155,7 +156,7 @@ export default {
         width: 50px;
         height: 50px;
         border-radius: 50%;
-        background-color: pink;
+        // background-color: pink;
         img {
           border-radius: 50%;
           width: 100%;
@@ -166,7 +167,7 @@ export default {
     }
   }
   .main {
-    background-color: pink;
+    // background-color: pink;
   }
 }
 </style>
