@@ -14,26 +14,56 @@
         <span> 筛选了100040条数据 </span>
       </div>
       <div class="text item">
-        <ArticleTable></ArticleTable>
-        <el-pagination background layout="prev, pager, next" :total="1000">
+        <ArticleTable :articleList="articleList"></ArticleTable>
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="paramsPage.total_count"
+          @current-change="changePage"
+        >
         </el-pagination>
       </div>
     </el-card>
   </div>
 </template>
 <script>
+import { getArticles } from '../../api/article'
 import ArticleBread from './components/article-bread.vue'
 import ArticleFrom from './components/article-from.vue'
 import ArticleTable from './components/article-table.vue'
 export default {
   name: 'articleIndex',
   data () {
-    return {}
+    return {
+      articleList: [],
+      paramsPage: {
+        page: 1,
+        per_page: 10,
+        total_count: 0
+      }
+    }
   },
-  created () {},
+  created () {
+    this.getArticles()
+  },
   computed: {},
   components: { ArticleBread, ArticleFrom, ArticleTable },
-  methods: {}
+  methods: {
+    async getArticles () {
+      const { data } = await getArticles({
+        page: this.paramsPage.page,
+        per_page: this.paramsPage.per_page
+      })
+      console.log(data)
+      this.articleList = data.data.results
+      this.paramsPage.total_count =
+        data.data.total_count / this.paramsPage.per_page
+    },
+    changePage (page) {
+      this.paramsPage.page = page
+      this.getArticles()
+    }
+  }
 }
 </script>
 <style lang="less" scoped>

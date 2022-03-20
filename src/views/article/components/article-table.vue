@@ -1,32 +1,55 @@
 <template>
-  <el-table :data="tableData" stripe style="width: 100%">
-    <el-table-column prop="date" label="日期" width="180"> </el-table-column>
-    <el-table-column prop="name" label="姓名" width="180"> </el-table-column>
-    <el-table-column prop="address" label="地址"> </el-table-column>
+  <el-table :data="articleList" stripe style="width: 100%">
+    <el-table-column prop="" label="封面">
+      <template slot-scope="scope">
+        <el-image
+          :src="scope.row.cover.images[0]"
+          style="width: 100px; height: 100px"
+          fit="cover"
+          lazy
+        ></el-image>
+      </template>
+    </el-table-column>
+    <el-table-column prop="title" label="标题"> </el-table-column>
+    <el-table-column prop="status">
+      <template slot-scope="scope">
+        <el-tag :type="articleStatus[scope.row.status].type">
+          {{ articleStatus[scope.row.status].text }}
+        </el-tag>
+        <!-- <el-tag v-if="scope.row.status === 1" type="success">全部</el-tag>
+        <el-tag v-if="scope.row.status === 2" type="info">草稿</el-tag>
+        <el-tag v-if="scope.row.status === 3" type="warning">带审核</el-tag>
+        <el-tag v-if="scope.row.status === 4" type="danger">审核失败</el-tag>
+        <el-tag v-if="scope.row.status === 5" type="danger">已删除</el-tag> -->
+      </template>
+    </el-table-column>
+    <el-table-column prop="pubdate" label="发布时间"> </el-table-column>
+    <el-table-column prop="title" label="操作">
+      <template>
+        <el-button type="primary" icon="el-icon-edit" circle></el-button>
+        <el-button type="danger" icon="el-icon-delete" circle></el-button>
+      </template>
+    </el-table-column>
   </el-table>
 </template>
 <script>
 export default {
   name: 'article-table',
+  props: {
+    articleList: {
+      type: Array,
+      default: () => []
+    }
+  },
   data () {
     return {
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      articleStatus: [
+        { status: 0, text: '草稿', type: 'info' }, // 0
+        { status: 1, text: '待审核', type: '' }, // 1
+        { status: 2, text: '审核通过', type: 'success' }, // 2
+        { status: 3, text: '审核失败', type: 'warning' }, // 3
+        { status: 4, text: '已删除', type: 'danger' } // 4
+      ]
     }
   },
   created () {},
@@ -35,4 +58,10 @@ export default {
   methods: {}
 }
 </script>
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+/deep/.cell img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+</style>

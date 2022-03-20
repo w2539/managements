@@ -13,7 +13,7 @@
       </el-form-item>
 
       <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="活动区域">
+        <el-form-item label="频道">
           <el-select v-model="form.region" placeholder="请选择活动区域">
             <el-option label="区域一" value="shanghai"></el-option>
             <el-option label="区域二" value="beijing"></el-option>
@@ -30,6 +30,13 @@
           >
           </el-date-picker>
         </el-form-item>
+
+        <el-button
+          type="primary"
+          class="from-button"
+          @click="submitForm('from')"
+          >查询</el-button
+        >
       </el-form>
     </el-form>
   </div>
@@ -49,7 +56,23 @@ export default {
   created () {},
   computed: {},
   components: {},
-  methods: {}
+  methods: {
+    submitForm () {
+      this.$rems.form.validate((valid, err) => {
+        if (!valid) {
+          this.$message.error('请填写完毕')
+          this.$emit('close')
+        } else {
+          this.getUserInfo()
+        }
+      })
+    }
+  }
 }
 </script>
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.from-button {
+  margin-top: 15px;
+  margin-left: 120px;
+}
+</style>
