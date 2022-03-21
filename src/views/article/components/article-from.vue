@@ -2,70 +2,72 @@
   <div class="article-from">
     <el-form ref="form" :model="form" label-width="80px">
       <el-form-item label="特殊资源">
-        <el-radio-group v-model="form.resource">
-          <el-radio label="全部"></el-radio>
-          <el-radio label="草稿"></el-radio>
-          <el-radio label="带审核"></el-radio>
-          <el-radio label="审核通过"></el-radio>
-          <el-radio label="审核失败"></el-radio>
-          <el-radio label="已删除"></el-radio>
+        <el-radio-group v-model="form.status">
+          <el-radio :label="null">全部</el-radio>
+          <el-radio :label="0">草稿</el-radio>
+          <el-radio :label="1">带审核</el-radio>
+          <el-radio :label="2">审核通过</el-radio>
+          <el-radio :label="3">审核失败</el-radio>
+          <el-radio :label="4">已删除</el-radio>
         </el-radio-group>
       </el-form-item>
 
-      <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="频道">
-          <el-select v-model="form.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
-          </el-select>
-        </el-form-item>
+      <el-form-item label="频道">
+        <el-select v-model="form.channel_id" placeholder="请选择文章频道">
+          <el-option label="全部" value="null"></el-option>
+          <el-option
+            v-for="data in articlesChannels"
+            :key="data.id"
+            :label="data.name"
+            :value="data.id"
+          ></el-option>
+        </el-select>
+      </el-form-item>
 
-        <el-form-item label="活动时间">
-          <el-date-picker
-            v-model="form.date1"
-            type="datetimerange"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            :default-time="['12:00:00']"
-          >
-          </el-date-picker>
-        </el-form-item>
-
-        <el-button
-          type="primary"
-          class="from-button"
-          @click="submitForm('from')"
-          >查询</el-button
+      <el-form-item label="活动时间">
+        <el-date-picker
+          v-model="form.begin_pubdate"
+          type="datetimerange"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :default-time="['12:00:00']"
         >
-      </el-form>
+        </el-date-picker>
+      </el-form-item>
+
+      <el-button type="primary" class="from-button" @click="submitForm"
+        >查询</el-button
+      >
     </el-form>
   </div>
 </template>
 <script>
+import { getArticlesChannels } from '../../../api/article.js'
 export default {
   name: 'article-from',
   data () {
     return {
       form: {
-        region: '',
-        date1: '',
-        resource: ''
-      }
+        channel_id: null,
+        begin_pubdate: null,
+        status: null
+      },
+      articlesChannels: {}
     }
   },
-  created () {},
+  created () {
+    this.getArticlesChannels()
+  },
   computed: {},
   components: {},
   methods: {
     submitForm () {
-      this.$rems.form.validate((valid, err) => {
-        if (!valid) {
-          this.$message.error('请填写完毕')
-          this.$emit('close')
-        } else {
-          this.getUserInfo()
-        }
-      })
+      this.$emit('articleFrom', this.form)
+    },
+    async getArticlesChannels () {
+      const { data } = await getArticlesChannels()
+      console.log(data.data.channels)
+      this.articlesChannels = data.data.channels
     }
   }
 }

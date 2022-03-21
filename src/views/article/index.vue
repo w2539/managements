@@ -6,12 +6,12 @@
           <ArticleBread></ArticleBread>
         </span>
       </div>
-      <ArticleFrom></ArticleFrom>
+      <ArticleFrom @articleFrom="articleFrom"></ArticleFrom>
     </el-card>
 
     <el-card class="box-card">
       <div slot="header" class="clearfix">
-        <span> 筛选了100040条数据 </span>
+        <span> 筛选了{{ activeCount }}条数据 </span>
       </div>
       <div class="text item">
         <ArticleTable :articleList="articleList"></ArticleTable>
@@ -40,19 +40,28 @@ export default {
         page: 1,
         per_page: 10,
         total_count: 0
-      }
+      },
+      status: null
     }
   },
+
   created () {
     this.getArticles()
   },
-  computed: {},
+  computed: {
+    activeCount () {
+      return parseInt(this.paramsPage.total_count)
+    }
+  },
   components: { ArticleBread, ArticleFrom, ArticleTable },
   methods: {
-    async getArticles () {
+    async getArticles (status = null, channel_id = null, begin_pubdate = null) {
       const { data } = await getArticles({
         page: this.paramsPage.page,
-        per_page: this.paramsPage.per_page
+        per_page: this.paramsPage.per_page,
+        status: status,
+        channel_id: channel_id,
+        begin_pubdate: begin_pubdate
       })
       console.log(data)
       this.articleList = data.data.results
@@ -62,6 +71,9 @@ export default {
     changePage (page) {
       this.paramsPage.page = page
       this.getArticles()
+    },
+    async articleFrom (from) {
+      this.getArticles(from.status, from.channel_id)
     }
   }
 }
