@@ -55,13 +55,14 @@ export default {
   },
   components: { ArticleBread, ArticleFrom, ArticleTable },
   methods: {
-    async getArticles (status = null, channel_id = null, begin_pubdate = null) {
+    async getArticles (status = null, channel_id = null, beginPubdate) {
       const { data } = await getArticles({
         page: this.paramsPage.page,
         per_page: this.paramsPage.per_page,
         status: status,
         channel_id: channel_id,
-        begin_pubdate: begin_pubdate
+        begin_pubdate: beginPubdate ? beginPubdate[0] : null,
+        end_pubdate: beginPubdate ? beginPubdate[1] : null
       })
       console.log(data)
       this.articleList = data.data.results
@@ -73,7 +74,8 @@ export default {
       this.getArticles()
     },
     async articleFrom (from) {
-      this.getArticles(from.status, from.channel_id)
+      console.log(from.beginPubdate)
+      this.getArticles(from.status, from.channel_id, from.beginPubdate)
     }
   }
 }

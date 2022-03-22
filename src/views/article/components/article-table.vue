@@ -25,14 +25,20 @@
     </el-table-column>
     <el-table-column prop="pubdate" label="发布时间"> </el-table-column>
     <el-table-column prop="title" label="操作">
-      <template>
+      <template slot-scope="scope">
         <el-button type="primary" icon="el-icon-edit" circle></el-button>
-        <el-button type="danger" icon="el-icon-delete" circle></el-button>
+        <el-button
+          @click="deleteArticle(scope.row.id)"
+          type="danger"
+          icon="el-icon-delete"
+          circle
+        ></el-button>
       </template>
     </el-table-column>
   </el-table>
 </template>
 <script>
+import { deleteArticles } from '../../../api/article.js'
 export default {
   name: 'article-table',
   props: {
@@ -55,7 +61,29 @@ export default {
   created () {},
   computed: {},
   components: {},
-  methods: {}
+  methods: {
+    deleteArticle (id) {
+      this.$confirm('是否真的要删除文章?', '删除文章', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          await deleteArticles(id).then(() => {
+            this.$message({
+              type: 'success',
+              message: '删除成功'
+            })
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'success',
+            message: '已取消删除'
+          })
+        })
+    }
+  }
 }
 </script>
 <style lang="less" scoped>
