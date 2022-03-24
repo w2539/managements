@@ -68,7 +68,6 @@ export default {
     },
     async getArticlesChannels () {
       const { data } = await getArticlesChannels()
-      console.log(data.data.channels)
       this.articlesChannels = data.data.channels
     }
   }

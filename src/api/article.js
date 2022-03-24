@@ -26,10 +26,48 @@ export const getArticlesChannels = () => {
 /**
  * 删除文章列表
  */
-
 export const deleteArticles = (articleId) => {
   return request({
     method: 'GET',
     url: `/mp/v1_0/articles/${articleId}`
+  })
+}
+
+/**
+ * 发布文章
+ */
+export const issueArticles = (data, draft = false) => {
+  return request({
+    method: 'POST',
+    url: '/mp/v1_0/articles',
+    params: {
+      draft
+    },
+    data
+  })
+}
+
+/**
+ * 根据Id获取文章
+ */
+
+export const loadArticle = (articleId) => {
+  return request({
+    method: 'GET',
+    url: `/mp/v1_0/articles/${articleId}`
+  })
+}
+
+/**
+ * 发布文章
+ */
+export const changeArticles = (articleId, data, draft = false) => {
+  return request({
+    method: 'PUT',
+    url: `/mp/v1_0/articles/${articleId}`,
+    params: {
+      draft
+    },
+    data
   })
 }

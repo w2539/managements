@@ -26,7 +26,12 @@
     <el-table-column prop="pubdate" label="发布时间"> </el-table-column>
     <el-table-column prop="title" label="操作">
       <template slot-scope="scope">
-        <el-button type="primary" icon="el-icon-edit" circle></el-button>
+        <el-button
+          @click="$router.push('/issueArticle?id=' + scope.row.id)"
+          type="primary"
+          icon="el-icon-edit"
+          circle
+        ></el-button>
         <el-button
           @click="deleteArticle(scope.row.id)"
           type="danger"
