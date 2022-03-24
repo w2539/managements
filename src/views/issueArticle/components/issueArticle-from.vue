@@ -6,7 +6,13 @@
       </el-form-item>
 
       <el-form-item label="内容">
-        <el-input type="textarea" v-model="form.content"></el-input>
+        <el-tiptap
+          v-model="form.content"
+          :extensions="extensions"
+          height="400"
+          placeholder="请输入文章内容"
+        />
+        <!-- <el-input type="textarea" v-model="form.content"></el-input> -->
       </el-form-item>
 
       <el-form-item label="封面">
@@ -37,12 +43,36 @@
   </div>
 </template>
 <script>
+import 'element-tiptap/lib/index.css'
 import {
   getArticlesChannels,
   issueArticles,
   loadArticle,
   changeArticles
 } from '../../../api/article.js'
+import {
+  // necessary extensions
+  Doc,
+  Text,
+  Paragraph,
+  Heading,
+  Bold,
+  Underline,
+  Italic,
+  Strike,
+  ListItem,
+  BulletList,
+  OrderedList,
+  TodoItem,
+  TodoList,
+  Preview,
+  Fullscreen,
+  TextColor,
+  SelectAll,
+  CodeBlock,
+  Image
+  // Print
+} from 'element-tiptap'
 export default {
   name: 'issueArticle-from',
   data () {
@@ -61,7 +91,29 @@ export default {
         },
         channel_id: null
       },
-      articlesChannels: {}
+      articlesChannels: {},
+      extensions: [
+        new Doc(),
+        new Text(),
+        new Paragraph(),
+        new Heading({ level: 5 }),
+        new Bold({ bubble: true }), // render command-button in bubble menu.
+        new Underline({ bubble: true, menubar: false }), // 下划线
+        new Italic(), // 斜体
+        new Strike(), // 删除线
+        new ListItem(), //
+        new BulletList(), // 无序列表
+        new OrderedList(), // 有序列表
+        new TodoItem(), // 任务列表
+        new TodoList(), // 与任务列表一起使用
+        // new Print() // 打印
+        new Preview(), // 预览
+        new Fullscreen(), // 全屏
+        new TextColor(), // 字体颜色
+        new SelectAll(), // 全选
+        new CodeBlock(), // 代码块
+        new Image()
+      ]
     }
   },
   created () {
@@ -76,13 +128,20 @@ export default {
   methods: {
     async onSubmit () {
       if (this.$route.query.id) {
-        await changeArticles(this.$route.query.id, this.form).then(() => {
-          this.$message({
-            type: 'success',
-            message: '修改成功'
+        try {
+          await changeArticles(this.$route.query.id, this.form).then(() => {
+            this.$message({
+              type: 'success',
+              message: '修改成功'
+            })
           })
-        })
-        this.$router.push('/article')
+          this.$router.push('/article')
+        } catch (err) {
+          this.$message({
+            type: 'error',
+            message: '传入数据不符合要求'
+          })
+        }
       } else {
         await issueArticles(this.form).then((res) => {
           this.$message({
