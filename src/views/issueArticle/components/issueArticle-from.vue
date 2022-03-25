@@ -1,13 +1,13 @@
 <template>
   <div class="issueArticle-from">
-    <el-form ref="form" :model="form" label-width="80px">
-      <el-form-item label="标题">
+    <el-form :model="form" :rules="ruleForm" ref="form" label-width="80px">
+      <el-form-item label="标题" prop="title" required>
         <el-input v-model="form.title"></el-input>
       </el-form-item>
 
-      <el-form-item label="内容">
+      <el-form-item label="内容" prop="content" required>
         <el-tiptap
-          v-model="form.content"
+          props="content"
           :extensions="extensions"
           height="400"
           placeholder="请输入文章内容"
@@ -24,7 +24,7 @@
         </el-radio-group>
       </el-form-item>
 
-      <el-form-item label="频道">
+      <el-form-item label="频道" prop="channel_id" required>
         <el-select v-model="form.channel_id" placeholder="请选择文章频道">
           <el-option
             v-for="data in articlesChannels"
@@ -36,13 +36,14 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">发表</el-button>
-        <el-button>存入草稿</el-button>
+        <el-button type="primary" @click="onSubmit('form')">发表</el-button>
+        <el-button @click="userSubmit('form')">存入草稿</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 <script>
+import { upLoadingImage } from '../../../api/images'
 import 'element-tiptap/lib/index.css'
 import {
   getArticlesChannels,
@@ -73,6 +74,14 @@ import {
   Image
   // Print
 } from 'element-tiptap'
+var validateContent = (rule, value, callback) => {
+  if (value === '' || value === '<p></p>') {
+    callback(new Error('请输入文章内容'))
+  } else {
+    console.log(1)
+    callback()
+  }
+}
 export default {
   name: 'issueArticle-from',
   data () {
@@ -112,12 +121,28 @@ export default {
         new TextColor(), // 字体颜色
         new SelectAll(), // 全选
         new CodeBlock(), // 代码块
-        new Image()
-      ]
+        new Image({
+          async uploadRequest (file) {
+            const formData = new FormData()
+            formData.append('image', file)
+            const { data: res } = await upLoadingImage(formData)
+            return res.data.url
+          }
+        })
+      ],
+      ruleForm: {
+        title: [
+          { required: true, message: '输入内容不能为空', trigger: 'blur' },
+          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        ],
+        content: [{ validator: validateContent, trigger: 'blur' }],
+        channel_id: [{ required: true, message: '请选择文章频道' }]
+      }
     }
   },
   created () {
     this.getArticlesChannels()
+    // 如果有文章Id
     if (this.$route.query.id) {
       // 通过id查询文章Id
       this.loadArticle()
@@ -126,39 +151,51 @@ export default {
   computed: {},
   components: {},
   methods: {
-    async onSubmit () {
-      if (this.$route.query.id) {
-        try {
-          await changeArticles(this.$route.query.id, this.form).then(() => {
-            this.$message({
-              type: 'success',
-              message: '修改成功'
+    async onSubmit (draft = false) {
+      this.$refs.form.validate(async (valid, err) => {
+        if (!valid) {
+          this.$message.error('请填写完毕')
+        } else {
+          if (this.$route.query.id) {
+            await changeArticles(this.$route.query.id, this.form, draft).then(
+              () => {
+                this.$message({
+                  type: 'success',
+                  message: draft ? '储存成功' : '修改成功'
+                })
+              }
+            )
+            this.$router.push('/article')
+          } else {
+            await issueArticles(this.form, draft).then((res) => {
+              this.$message({
+                type: 'success',
+                message: draft ? '保存成功' : '提交成功'
+              })
             })
-          })
-          this.$router.push('/article')
-        } catch (err) {
-          this.$message({
-            type: 'error',
-            message: '传入数据不符合要求'
-          })
+          }
         }
-      } else {
-        await issueArticles(this.form).then((res) => {
-          this.$message({
-            type: 'success',
-            message: '提交成功'
-          })
-        })
-      }
+      })
     },
+    // 获取频道列表
     async getArticlesChannels () {
       const { data } = await getArticlesChannels()
       this.articlesChannels = data.data.channels
     },
+    // 根据文章Id 获取内容
     async loadArticle () {
       const { data } = await loadArticle(this.$route.query.id)
       this.form = data.data
-    }
+    },
+    // 草稿
+    async userSubmit (draft) {
+      this.onSubmit((draft = true))
+      // 将对象的所有值清空
+      Object.keys(this.form).forEach((key) => {
+        this.form[key] = ''
+      })
+    },
+    async addArticle (draft = false) {}
   }
 }
 </script>

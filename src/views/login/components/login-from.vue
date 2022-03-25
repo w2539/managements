@@ -11,7 +11,7 @@
         ref="ruleForm"
         class="demo-ruleForm"
       >
-        <el-form-item prop="mobile">
+        <el-form-item prop="mobile" >
           <el-input
             prefix-icon="el-icon-user"
             type="text"
