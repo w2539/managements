@@ -119,9 +119,10 @@ export default {
     }
   }
   .header {
-    min-width: 300px;
+    min-width: 800px;
     position: relative;
     display: flex;
+    justify-content: space-between;
     height: 80px !important;
     // background-color: aquamarine;
     border-bottom: 1px solid #ccc;
@@ -143,9 +144,6 @@ export default {
       }
     }
     &-right {
-      position: fixed;
-      top: 0px;
-      right: 0px;
       display: flex;
       justify-content: space-evenly;
       align-items: center;

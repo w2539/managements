@@ -40,6 +40,11 @@ const routes = [
         component: () => import('../views/issueArticle/')
       },
       {
+        path: '/material',
+        name: 'material',
+        component: () => import('../views/material/index.vue')
+      },
+      {
         path: '/comment',
         name: 'comment',
         component: () => import('../views/comment/')
