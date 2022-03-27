@@ -1,12 +1,15 @@
 <template>
-  <div class="material">
+  <div class="material" v-loading="loading">
     <el-card class="box-card">
       <div slot="header" class="clearfix">
         <span>
           <MaterialBread></MaterialBread>
         </span>
       </div>
-      <MaterialBody></MaterialBody>
+      <MaterialBody
+        @open="loading = true"
+        @close="loading = false"
+      ></MaterialBody>
     </el-card>
   </div>
 </template>
@@ -16,7 +19,9 @@ import MaterialBody from './components/material-body.vue'
 export default {
   name: 'material',
   data () {
-    return {}
+    return {
+      loading: false
+    }
   },
   created () {},
   computed: {},
@@ -26,11 +31,5 @@ export default {
 </script>
 <style lang="less" scoped>
 .material {
-  .box-card {
-    width: 1500px;
-  }
-  .MaterialBody {
-    padding: 10px;
-  }
 }
 </style>
