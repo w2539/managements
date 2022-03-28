@@ -23,3 +23,26 @@ export const getUserLoadingImage = (params) => {
     params
   })
 }
+
+/**
+ * 收藏图片
+ */
+export const addCollectImage = (imageId, collect) => {
+  return request({
+    method: 'PUT',
+    url: `/mp/v1_0/user/images/${imageId}`,
+    data: {
+      collect
+    }
+  })
+}
+
+/**
+ * 删除图片素材
+ */
+export const deleteImage = (imageId) => {
+  return request({
+    method: 'DELETE',
+    url: `/mp/v1_0/user/images/${imageId}`
+  })
+}

@@ -32,8 +32,18 @@
             style="height: 200px; width: 200px"
             :src="items.url"
             fit="cover"
-          ></el-image
-        ></el-col>
+          ></el-image>
+
+          <div class="userOperate">
+            <i
+              :class="
+                items.is_collected ? 'el-icon-star-on' : 'el-icon-star-off'
+              "
+              @click="addCollectImage(items)"
+            ></i>
+            <i @click="deleteImage(items)" class="el-icon-delete-solid"></i>
+          </div>
+        </el-col>
       </el-row>
     </div>
 
@@ -42,7 +52,8 @@
       @current-change="changePage"
       background
       layout="prev, pager, next"
-      :total="params.total_count"
+      :total="total_count"
+      :page-size="params.per_page"
     >
     </el-pagination>
 
@@ -69,7 +80,11 @@
   </div>
 </template>
 <script>
-import { getUserLoadingImage } from '../../../api/images'
+import {
+  getUserLoadingImage,
+  addCollectImage,
+  deleteImage
+} from '../../../api/images'
 import { getItem } from '../../../utils/storage'
 export default {
   name: 'material-body',
@@ -85,9 +100,9 @@ export default {
       userImage: {},
       params: {
         page: 1,
-        per_page: 12,
-        total_count: 0
-      }
+        per_page: 12
+      },
+      total_count: 0
     }
   },
   created () {
@@ -103,7 +118,7 @@ export default {
         page: this.params.page,
         per_page: this.params.per_page
       })
-      this.params.total_count = data.data.total_count
+      this.total_count = data.data.total_count
 
       this.userImage = data.data.results
     },
@@ -118,6 +133,28 @@ export default {
         type: 'success',
         message: '上传成功'
       })
+    },
+    async addCollectImage (items) {
+      this.$emit('open')
+      await addCollectImage(items.id, !items.is_collected).then(() => {
+        items.is_collected = !items.is_collected
+        this.$emit('close')
+        this.$message({
+          type: 'success',
+          message: '操作成功'
+        })
+      })
+    },
+    async deleteImage (items) {
+      this.$emit('open')
+      await deleteImage(items.id).then(() => {
+        this.$emit('close')
+        this.$message({
+          type: 'success',
+          message: '删除成功'
+        })
+        this.getUserLoadingImage()
+      })
     }
   }
 }
@@ -129,6 +166,7 @@ export default {
   margin-bottom: 10px;
 }
 /deep/ .el-col {
+  position: relative;
   margin-bottom: 30px;
 }
 /deep/.el-image__error {
@@ -138,5 +176,26 @@ export default {
 /deep/.el-dialog {
   min-width: 400px;
   min-height: 300px;
+}
+.userOperate {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  position: absolute;
+  bottom: 0px;
+  right: 79px;
+  left: 5px;
+  height: 40px;
+  background-color: rgba(204, 204, 204, 0.5);
+  .el-icon-star-on {
+    font-size: 26px !important;
+    color: red;
+  }
+  .el-icon-star-off {
+    font-size: 26px !important;
+  }
+  i {
+    font-size: 26px;
+  }
 }
 </style>
