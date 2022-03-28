@@ -12,7 +12,11 @@
           label="收藏"
         ></el-radio-button>
       </el-radio-group>
+      <el-button @click="dialogVisible = true" type="success"
+        >添加素材</el-button
+      >
     </div>
+
     <!-- 图片展示 -->
     <div class="body">
       <el-row :gutter="10">
@@ -33,6 +37,7 @@
       </el-row>
     </div>
 
+    <!-- 分页 -->
     <el-pagination
       @current-change="changePage"
       background
@@ -40,19 +45,47 @@
       :total="params.total_count"
     >
     </el-pagination>
+
+    <!-- 添加弹出层 -->
+    <el-dialog title="上传素材" :visible.sync="dialogVisible" width="30%">
+      <el-upload
+        class="upload-demo"
+        :show-file-list="false"
+        name="image"
+        drag
+        action="http://api-toutiao-web.itheima.net/mp/v1_0/user/images"
+        :headers="uploadHeaders"
+        :on-success="uploadSuccess"
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text" style="width: 100%">
+          将文件拖到此处，或<em>点击上传</em>
+        </div>
+        <div class="el-upload__tip" slot="tip">
+          只能上传jpg/png文件，且不超过500kb
+        </div>
+      </el-upload>
+    </el-dialog>
   </div>
 </template>
 <script>
 import { getUserLoadingImage } from '../../../api/images'
+import { getItem } from '../../../utils/storage'
 export default {
   name: 'material-body',
   data () {
+    const { token } = getItem('userInfo')
     return {
+      // 上传文件的请求头
+      uploadHeaders: {
+        Authorization: `Bearer ${token}`
+      },
+      dialogVisible: false,
       radio1: '全部',
       userImage: {},
       params: {
         page: 1,
-        per_page: 10,
+        per_page: 12,
         total_count: 0
       }
     }
@@ -77,12 +110,22 @@ export default {
     changePage (page) {
       this.params.page = page
       this.getUserLoadingImage()
+    },
+    uploadSuccess () {
+      this.dialogVisible = false
+      this.getUserLoadingImage()
+      this.$message({
+        type: 'success',
+        message: '上传成功'
+      })
     }
   }
 }
 </script>
 <style lang="less" scoped>
 .material-button {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 10px;
 }
 /deep/ .el-col {
@@ -91,5 +134,9 @@ export default {
 /deep/.el-image__error {
   width: 200px;
   height: 200px;
+}
+/deep/.el-dialog {
+  min-width: 400px;
+  min-height: 300px;
 }
 </style>
