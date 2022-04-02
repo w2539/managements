@@ -4,6 +4,7 @@
 import axios from 'axios'
 import store from '@/store'
 import router from '@/router'
+import JSONbig from 'json-bigint'
 
 const refreshToken = axios.create({
   baseURL: 'http://api-toutiao-web.itheima.net'
@@ -12,6 +13,17 @@ const refreshToken = axios.create({
 const request = axios.create({
   baseURL: 'http://api-toutiao-web.itheima.net'
 })
+request.defaults.transformResponse = [
+  function (data) {
+    try {
+      return JSONbig.parse(data)
+    } catch (err) {
+      return {
+        data
+      }
+    }
+  }
+]
 
 // 请求拦截器
 request.interceptors.request.use(

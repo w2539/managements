@@ -47,7 +47,7 @@ const routes = [
       {
         path: '/comment',
         name: 'comment',
-        component: () => import('../views/comment/')
+        component: () => import('../views/comment/index.vue')
       },
       {
         path: '/beanVermicelli',
