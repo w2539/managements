@@ -6,11 +6,13 @@
           <CommentBorder />
         </span>
       </div>
+      <CommentBody></CommentBody>
     </el-card>
   </div>
 </template>
 <script>
 import CommentBorder from './components/comment-border.vue'
+import CommentBody from './components/comment-body.vue'
 export default {
   name: 'comment',
   data () {
@@ -18,7 +20,7 @@ export default {
   },
   created () {},
   computed: {},
-  components: { CommentBorder },
+  components: { CommentBorder, CommentBody },
   methods: {}
 }
 </script>
