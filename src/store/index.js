@@ -15,6 +15,9 @@ export default new Vuex.Store({
 
       setItem(USER_KEY, state.user)
       // window.localStorage.setItem('TOUTIAO_USER', JSON.stringify(state.user))
+    },
+    setUserPhoto (state, data) {
+      state.user.photo = data
     }
   },
   actions: {},

@@ -46,3 +46,24 @@ export const deleteImage = (imageId) => {
     url: `/mp/v1_0/user/images/${imageId}`
   })
 }
+
+/**
+ * 修改用户头像
+ */
+export const changeUserPhoto = (data) => {
+  return request({
+    method: 'PATCH',
+    url: '/mp/v1_0/user/photo',
+    data
+  })
+}
+
+/**
+ * 获取用户资料
+ */
+export const getUserInfo = () => {
+  return request({
+    method: 'GET',
+    url: '/mp/v1_0/user/profile'
+  })
+}

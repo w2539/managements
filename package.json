@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.26.1",
     "core-js": "^3.6.5",
+    "cropperjs": "^1.5.12",
     "element-tiptap": "^1.27.1",
     "element-ui": "^2.15.6",
     "json-bigint": "^1.0.0",

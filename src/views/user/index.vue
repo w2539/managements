@@ -1,7 +1,18 @@
 <template>
-  <div class="user">kkkkk</div>
+  <div class="user">
+    <el-card class="box-card">
+      <div slot="header" class="clearfix">
+        <span>
+          <UserBorder></UserBorder>
+        </span>
+      </div>
+      <UserBody></UserBody>
+    </el-card>
+  </div>
 </template>
 <script>
+import UserBorder from './components/user-border.vue'
+import UserBody from './components/user-body.vue'
 export default {
   name: 'user',
   data () {
@@ -9,7 +20,7 @@ export default {
   },
   created () {},
   computed: {},
-  components: {},
+  components: { UserBorder, UserBody },
   methods: {}
 }
 </script>
