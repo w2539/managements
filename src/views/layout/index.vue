@@ -40,6 +40,7 @@
 <script>
 import LayoutAside from '../layout/components/layout-aside.vue'
 import { getUserInfo } from '../../api/layout.js'
+import globalBus from '../../utils/giobal-bus'
 export default {
   name: 'layout',
   data () {
@@ -50,6 +51,10 @@ export default {
   },
   created () {
     this.getUserInfo()
+    globalBus.$on('changeUserInfo', (data) => {
+      this.userInfo.photo = data.photo
+      this.userInfo.name = data.name
+    })
   },
   computed: {},
   components: { LayoutAside },

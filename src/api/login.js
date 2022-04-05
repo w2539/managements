@@ -7,3 +7,14 @@ export const loginAccount = (data) => {
     data
   })
 }
+
+/**
+ * 修改用户资料
+ */
+export const changeUserInfo = (data) => {
+  return request({
+    method: 'PATCH',
+    url: '/mp/v1_0/user/profile',
+    data
+  })
+}

@@ -2,21 +2,33 @@
   <div class="user-body">
     <el-row :gutter="20">
       <el-col :span="10">
-        <el-form ref="form" :model="userInfo" label-width="120px">
-          <el-form-item label="编号:"> {{ userInfo.id }} </el-form-item>
+        <el-form
+          ref="form"
+          :model="userInfo"
+          :rules="ruleForm"
+          label-width="120px"
+        >
+          <el-form-item label="编号:" prop="id">
+            {{ userInfo.id }}
+          </el-form-item>
 
-          <el-form-item label="手机号:">{{ userInfo.mobile }}</el-form-item>
+          <el-form-item label="手机号:" prop="mobile">{{
+            userInfo.mobile
+          }}</el-form-item>
 
-          <el-form-item label="媒体名称:">
+          <el-form-item label="媒体名称:" prop="name">
             <el-input v-model="userInfo.name"></el-input>
           </el-form-item>
 
-          <el-form-item label="媒体介绍:">
+          <el-form-item label="媒体介绍:" prop="intro">
             <el-input type="textarea" v-model="userInfo.intro"></el-input>
           </el-form-item>
 
-          <el-form-item label="邮箱:">
+          <el-form-item label="邮箱:" prop="email">
             <el-input v-model="userInfo.email"></el-input>
+          </el-form-item>
+          <el-form-item size="large">
+            <el-button type="primary" @click="onSubmit">保存</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -48,7 +60,6 @@
         <img :src="prewiewImage" ref="image" />
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="confirm">确 定</el-button>
       </span>
     </el-dialog>
@@ -59,14 +70,38 @@ import { mapState } from 'vuex'
 import 'cropperjs/dist/cropper.css'
 import Cropper from 'cropperjs'
 import { changeUserPhoto, getUserInfo } from '../../../api/images'
+import { changeUserInfo } from '../../../api/login'
+import globalBus from '../../../utils/giobal-bus.js'
+
 export default {
   name: 'user-body',
   data () {
     return {
-      userInfo: {},
+      userInfo: {
+        id: '',
+        name: '',
+        mobile: '',
+        photo: '',
+        intro: '',
+        email: ''
+      },
       dialogVisible: false,
       prewiewImage: null,
-      image: null
+      image: null,
+      ruleForm: {
+        name: [
+          { required: true, message: '输入内容不能为空', trigger: 'blur' },
+          { min: 3, max: 7, message: '长度在 3 到 7 个字符', trigger: 'blur' }
+        ],
+        intro: [
+          { required: true, message: '输入内容不能为空', trigger: 'blur' },
+          { min: 5, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: '输入内容不能为空', trigger: 'blur' },
+          { min: 5, max: 15, message: '长度在 1 到 15 个字符', trigger: 'blur' }
+        ]
+      }
     }
   },
   created () {
@@ -100,14 +135,12 @@ export default {
       // 没有反应
       this.$refs.file.value = ''
     },
-    handleClose (done) {},
     onOpened () {
       const image = this.$refs.image
       this.cropper = new Cropper(image, {
         aspectRatio: 5 / 5,
         viewMode: 1,
         dragMode: 'move',
-        aspectRatio: 1,
         autoCropArea: 1,
         cropBoxMovable: false,
         cropBoxResizable: false,
@@ -126,6 +159,7 @@ export default {
       })
     },
     async confirm () {
+      this.$emit('open')
       const file = await this.getCroppedCanvas()
       const fd = new FormData()
       fd.append('photo', file)
@@ -133,13 +167,36 @@ export default {
       // 向接口传入数据
       await changeUserPhoto(fd).then(() => {
         this.dialogVisible = false
-        this.getUserInfo()
-        this.$store.commit('setUserPhoto', this.userInfo.photo)
-        this.user.photo = this.fd
         this.$message({
           type: 'success',
           message: '修改成功'
         })
+        this.getUserInfo().then(() => {
+          globalBus.$emit('changeUserInfo', this.userInfo)
+        })
+      })
+      this.$emit('close')
+    },
+    async onSubmit () {
+      this.$refs.form.validate(async (valid, err) => {
+        if (!valid) {
+          this.$message.error('请填写完毕')
+        } else {
+          this.$emit('open')
+          const { name, intro, email } = this.userInfo
+          await changeUserInfo({ name, intro, email }).then((res) => {
+            this.$message({
+              type: 'success',
+              message: '修改成功'
+            })
+            // console.log(res.data.data)
+            this.userInfo.name = res.data.data.name
+            this.userInfo.intro = res.data.data.intro
+            this.userInfo.email = res.data.data.email
+          })
+          globalBus.$emit('changeUserInfo', this.userInfo)
+          this.$emit('close')
+        }
       })
     }
   }

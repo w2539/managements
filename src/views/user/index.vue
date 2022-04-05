@@ -1,12 +1,12 @@
 <template>
-  <div class="user">
+  <div class="user" v-loading="loading">
     <el-card class="box-card">
       <div slot="header" class="clearfix">
         <span>
           <UserBorder></UserBorder>
         </span>
       </div>
-      <UserBody></UserBody>
+      <UserBody @open="loading = true" @close="loading = false"></UserBody>
     </el-card>
   </div>
 </template>
@@ -16,7 +16,9 @@ import UserBody from './components/user-body.vue'
 export default {
   name: 'user',
   data () {
-    return {}
+    return {
+      loading: false
+    }
   },
   created () {},
   computed: {},
