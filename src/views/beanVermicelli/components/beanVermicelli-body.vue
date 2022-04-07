@@ -8,7 +8,7 @@
         ></el-radio-button>
         <el-radio-button
           @click.native="beanVermicelli = false"
-          label="粉丝画像"
+          label="粉丝分布"
         ></el-radio-button>
       </el-radio-group>
       <component :is="beanVermicelli ? 'List' : 'Table'"></component>

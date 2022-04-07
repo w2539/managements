@@ -58,7 +58,7 @@
     </el-pagination>
 
     <!-- 添加弹出层 -->
-    <el-dialog title="上传素材" :visible.sync="dialogVisible" width="30%">
+    <el-dialog title="上传素材" :visible.sync="dialogVisible">
       <el-upload
         class="upload-demo"
         :show-file-list="false"
