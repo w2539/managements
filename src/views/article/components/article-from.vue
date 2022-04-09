@@ -78,4 +78,5 @@ export default {
   margin-top: 15px;
   margin-left: 120px;
 }
+
 </style>

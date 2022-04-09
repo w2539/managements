@@ -79,6 +79,7 @@ export default {
               type: 'success',
               message: '删除成功'
             })
+            this.$emit('deleteArticles')
           })
         })
         .catch(() => {

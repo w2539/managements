@@ -14,7 +14,10 @@
         <span> 筛选了{{ activeCount }}条数据 </span>
       </div>
       <div class="text item">
-        <ArticleTable :articleList="articleList"></ArticleTable>
+        <ArticleTable
+          @deleteArticles="deleteArticles"
+          :articleList="articleList"
+        ></ArticleTable>
         <el-pagination
           background
           layout="prev, pager, next"
@@ -55,6 +58,9 @@ export default {
   },
   components: { ArticleBread, ArticleFrom, ArticleTable },
   methods: {
+    deleteArticles () {
+      this.getArticles()
+    },
     async getArticles (status = null, channel_id = null, beginPubdate) {
       const { data } = await getArticles({
         page: this.paramsPage.page,

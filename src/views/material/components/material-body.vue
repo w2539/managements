@@ -1,5 +1,5 @@
 <template>
-  <div class="material-body">
+  <div class="material-body" v-loading="loading">
     <!-- 顶部切换按钮 -->
     <div class="material-button">
       <el-radio-group v-model="radio1">
@@ -12,7 +12,10 @@
           label="收藏"
         ></el-radio-button>
       </el-radio-group>
-      <el-button @click="dialogVisible = true" type="success"
+      <el-button
+        @click="dialogVisible = true"
+        type="success"
+        v-if="materialOptions"
         >添加素材</el-button
       >
     </div>
@@ -21,20 +24,35 @@
     <div class="body">
       <el-row :gutter="10">
         <el-col
-          v-for="items in userImage"
+          v-for="(items, index) in userImage"
           :key="items.id"
           :xl="4"
           :xs="12"
           :md="6"
           :span="4"
         >
+          <!-- 普通的图片 -->
           <el-image
+            @click="pitchImage = index"
+            v-if="!materialOptions"
+            style="height: 100px; width: 100px"
+            :src="items.url"
+            fit="cover"
+          ></el-image>
+
+          <!-- 小图 -->
+          <el-image
+            v-else="materialOptions"
             style="height: 200px; width: 200px"
             :src="items.url"
             fit="cover"
           ></el-image>
 
-          <div class="userOperate">
+          <!-- 小图点击 -->
+          <div class="pitch" v-if="pitchImage === index"></div>
+
+          <!-- 放置图标 -->
+          <div class="userOperate" v-if="materialOptions">
             <i
               :class="
                 items.is_collected ? 'el-icon-star-on' : 'el-icon-star-off'
@@ -88,6 +106,12 @@ import {
 import { getItem } from '../../../utils/storage'
 export default {
   name: 'material-body',
+  props: {
+    materialOptions: {
+      type: Boolean,
+      default: true
+    }
+  },
   data () {
     const { token } = getItem('userInfo')
     return {
@@ -97,12 +121,14 @@ export default {
       },
       dialogVisible: false,
       radio1: '全部',
-      userImage: {},
+      userImage: [],
       params: {
         page: 1,
         per_page: 12
       },
-      total_count: 0
+      total_count: 0,
+      pitchImage: null,
+      loading: false
     }
   },
   created () {
@@ -123,8 +149,12 @@ export default {
       this.userImage = data.data.results
     },
     changePage (page) {
+      this.pitchImage = null
+      this.loading = true
       this.params.page = page
-      this.getUserLoadingImage()
+      this.getUserLoadingImage().then(() => {
+        this.loading = false
+      })
     },
     uploadSuccess () {
       this.dialogVisible = false
@@ -197,5 +227,28 @@ export default {
   i {
     font-size: 26px;
   }
+}
+/deep/.el-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.normal {
+  width: 200px;
+  height: 200px;
+}
+.pitch {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100px;
+  height: 100px;
+  background: url('../../../assets/image/selected.png') no-repeat;
+  background-size: cover;
+  opacity: 0.5;
+}
+.small {
+  width: 100px;
+  height: 100p;
 }
 </style>

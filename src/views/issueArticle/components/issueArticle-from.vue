@@ -7,6 +7,7 @@
 
       <el-form-item label="内容" prop="content" required>
         <el-tiptap
+          v-model="form.content"
           props="content"
           :extensions="extensions"
           height="400"
@@ -15,13 +16,23 @@
         <!-- <el-input type="textarea" v-model="form.content"></el-input> -->
       </el-form-item>
 
-      <el-form-item label="封面">
+      <el-form-item label="封面" class="clearfix">
         <el-radio-group v-model="form.cover.type">
           <el-radio :label="1">单图</el-radio>
           <el-radio :label="3">三图</el-radio>
           <el-radio :label="0">无图</el-radio>
           <el-radio :label="-1">自动</el-radio>
         </el-radio-group>
+        <template v-if="form.cover.type > 0">
+          <div class="cover">
+            <UpdateCover
+              :images="form.cover.images[index]"
+              @submit="addCoverType(index, $event)"
+              v-for="(items, index) in form.cover.type"
+              :key="items"
+            />
+          </div>
+        </template>
       </el-form-item>
 
       <el-form-item label="频道" prop="channel_id" required>
@@ -74,6 +85,7 @@ import {
   Image
   // Print
 } from 'element-tiptap'
+import UpdateCover from './update-cover.vue'
 var validateContent = (rule, value, callback) => {
   if (value === '' || value === '<p></p>') {
     callback(new Error('请输入文章内容'))
@@ -133,7 +145,7 @@ export default {
       ruleForm: {
         title: [
           { required: true, message: '输入内容不能为空', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { min: 5, max: 30, message: '长度在 5 到 30 个字符', trigger: 'blur' }
         ],
         content: [{ validator: validateContent, trigger: 'blur' }],
         channel_id: [{ required: true, message: '请选择文章频道' }]
@@ -149,29 +161,32 @@ export default {
     }
   },
   computed: {},
-  components: {},
+  components: { UpdateCover },
   methods: {
+    addCoverType (index, img) {
+      this.form.cover.images[index] = img
+    },
     async onSubmit (draft = false) {
       this.$refs.form.validate(async (valid, err) => {
         if (!valid) {
           this.$message.error('请填写完毕')
         } else {
+          // 有Id 保
           if (this.$route.query.id) {
-            await changeArticles(this.$route.query.id, this.form, draft).then(
-              () => {
-                this.$message({
-                  type: 'success',
-                  message: draft ? '储存成功' : '修改成功'
-                })
-              }
-            )
-            this.$router.push('/article')
+            await changeArticles(this.$route.query.id, this.form).then(() => {
+              this.$message({
+                type: 'success',
+                message: draft ? '储存成功' : '修改成功'
+              })
+              this.$router.push('/article')
+            })
           } else {
-            await issueArticles(this.form, draft).then((res) => {
+            await issueArticles(this.form).then((res) => {
               this.$message({
                 type: 'success',
                 message: draft ? '保存成功' : '提交成功'
               })
+              this.$router.push('/article')
             })
           }
         }
@@ -190,6 +205,7 @@ export default {
     // 草稿
     async userSubmit (draft) {
       this.onSubmit((draft = true))
+      this.$router.push('/article')
       // 将对象的所有值清空
       Object.keys(this.form).forEach((key) => {
         this.form[key] = ''
@@ -202,5 +218,11 @@ export default {
 <style lang="less" scoped>
 .issueArticle-from {
   margin-top: 20px;
+}
+.cover {
+  width: 500px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
 }
 </style>

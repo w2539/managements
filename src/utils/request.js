@@ -84,6 +84,10 @@ request.interceptors.response.use(
       }
     } else if (status === 403) {
       // 没有权限
+      this.$message.fail({
+        message: '没有权限',
+        forbidClick: true
+      })
     } else if (status === 404) {
       // 资源不存在
       this.$message.fail({

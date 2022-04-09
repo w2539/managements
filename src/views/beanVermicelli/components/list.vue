@@ -6,8 +6,8 @@
         :xs="12"
         :md="6"
         :span="4"
-        v-for="items in list"
-        :key="items.id"
+        v-for="(items,index) in list.results"
+        :key="index"
         class="elCol"
       >
         <div class="list-items">
@@ -56,7 +56,7 @@ export default {
       })
       const { total_count: totalCount } = data.data
       this.paramsPage.totalCount = totalCount
-      this.list = data.data.results
+      this.list = data.data
     }
   }
 }
