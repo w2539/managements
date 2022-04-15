@@ -42,7 +42,7 @@
 
           <!-- 小图 -->
           <el-image
-            v-else="materialOptions"
+            v-else
             style="height: 200px; width: 200px"
             :src="items.url"
             fit="cover"
